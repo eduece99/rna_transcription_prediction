@@ -13,8 +13,6 @@ as a baseline.  The baseline here is of course a fair comparison, as the data ar
 
 Said constructs maintain a strong Kozak-like 5'UTR context while avoiding obvious decay liabilities in the 3'UTR. In this setting, the key decision is not only which sequences predict the highest day-28 RNA, but which constructs are most likely to stay durable after a month in liver without being crippled by AU-rich decay elements or the liver-dominant miR-122 seed motif.
 
-The workflow in the three analysis scripts is intentionally simple and transparent: first build sequence-derived features from the 5'UTR and 3'UTR, then fit a mean XGBoost regressor and quantile XGBoost models for uncertainty, and finally use a mutation-based genetic search to propose new candidates under the learned model. This matches the biology described in the brief: 5'UTR effects are dominated by translation and initiation, while 3'UTR effects are dominated by transcript stability and decay.
-
 ## Methodology
 
 The modeling pipeline is split across three scripts:
@@ -23,7 +21,7 @@ The modeling pipeline is split across three scripts:
 - 2_create_predictions.py loads the trained models and predicts day-28 mean values for the target constructs using the same engineered feature set. This provides the predicted mean and approximate 80% interval for each construct.
 - 3_create_constructs.py uses a mutation-based search over valid UTR sequences, scoring each new candidate with the trained median model and heavily penalizing biologically poor motifs such as upstream AUGs in the 5'UTR, AU-rich decay motifs like AUUUA, and the miR-122 seed ACACUCC in the 3'UTR.
 
-
+Github Copilot on auto mode was used to generate much of the code in this repo, with the aid of the supplied AGENTS.md file.
 
 The feature engineering focuses on the features explicitly highlighted in the brief: upstream AUG counts and Kozak context in the 5'UTR; AU-rich motifs, miR-122 seed matches, and composition-based decay proxies in the 3'UTR. This is not an opaque end-to-end model — it is a biologically informed predictor built around the mechanisms the exercise is designed to reward.
 
@@ -35,7 +33,6 @@ More expensive methods such as neural networks, I avoided, namely due to hardwar
 
 I considered a plain “best fit” model alone, but that would give a point estimate without an honest uncertainty band. I also considered a purely random sequence generator, which would not be constrained by the biology we know matters here. The final workflow is a fair compromise: the model is read out in the same biological language as the domain problem, and the design-generation step is constrained by sequence validity and known negative motifs.
 
-A basic baseline would be a simple mean model or a library-only heuristic such as “avoid AUUUA and ACACUCC.” That is transparent and easy to explain, but it ignores the richer combination of 5'UTR initiation effects and 3'UTR decay effects. The final XGBoost approach is more informative because it learns how these features jointly contribute, while still remaining interpretable enough to explain in a bench-scientist setting.
 
 ## How much confidence I have
 
