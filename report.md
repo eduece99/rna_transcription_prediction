@@ -8,8 +8,7 @@ Then, `./run_scripts.sh` to run the Python scripts to output the predictions int
 
 ## Recommendation and interpretation
 
-10 custom constructs are in the "designs.csv" file with predicted RNA levels and 80% lower and upper prediction intervals.  The same predicted levels have been outputted for the existing constructs to act
-as a baseline.  The baseline here is of course a fair comparison, as the data are already there and have been experimentally validated.  
+10 custom constructs are in the "designs.csv" file with predicted RNA levels and 80% lower and upper prediction intervals.  The same predicted levels have been outputted for the existing constructs to act as a baseline.  The baseline here is of course a fair comparison, as the data are already there and have been experimentally validated.  
 
 Said constructs maintain a strong Kozak-like 5'UTR context while avoiding obvious decay liabilities in the 3'UTR. In this setting, the key decision is not only which sequences predict the highest day-28 RNA, but which constructs are most likely to stay durable after a month in liver without being crippled by AU-rich decay elements or the liver-dominant miR-122 seed motif.
 
@@ -23,15 +22,13 @@ The modeling pipeline is split across three scripts:
 
 Github Copilot on auto mode was used to generate much of the code in this repo, with the aid of the supplied AGENTS.md file.
 
-The feature engineering focuses on the features explicitly highlighted in the brief: upstream AUG counts and Kozak context in the 5'UTR; AU-rich motifs, miR-122 seed matches, and composition-based decay proxies in the 3'UTR. This is not an opaque end-to-end model — it is a biologically informed predictor built around the mechanisms the exercise is designed to reward.
-
 ## Rationale
 
 XGBoost has been a well known library for the highly performant gradient boosted tree method, which can be used to yield an excellent performance on a dataset without requiring a great training time.  Granted it is not as transparent as say, a linear regression model, but interpretability wasn't my main concern here.  In addition, feature importances, if needed, can be extracted directly from the tree model anyway by virtue of how soon and thus influential (smaller depth number) a feature is used in a tree, collectively.
 
 More expensive methods such as neural networks, I avoided, namely due to hardware constraints.  I am aware of more recent tabular predictive methods such as TabPFN, but given their compute time I did not see any real reason to use them for a small predictive gain.  In addition, the data used here was somewhat lacking and it would be more useful to obtain better data, as explained later.
 
-I considered a plain “best fit” model alone, but that would give a point estimate without an honest uncertainty band. I also considered a purely random sequence generator, which would not be constrained by the biology we know matters here. The final workflow is a fair compromise: the model is read out in the same biological language as the domain problem, and the design-generation step is constrained by sequence validity and known negative motifs.
+I considered a plain “best fit” model alone, but that would give a point estimate without an honest uncertainty band. I also considered a purely random sequence generator, but this would not be constrained by the biology we know matters here (though would be a useful baseline vs the current mutation evolutionary approach). The final workflow is a fair compromise: the model is read out in the same biological language as the domain problem, and the design-generation step is constrained by sequence validity and known negative motifs.
 
 
 ## How much confidence I have
@@ -67,8 +64,7 @@ I did not use the in vitro data due to time constraints.  However more crucially
 
 The modelling was performed only using day 28 data points, ignoring day 3 from the in vivo data.  If say, the ratio between day 3 vs day 28 was taken into account (and thus model degradation) then this would provide more useful predictions for future mRNA.
 
-Finally, The prediction intervals are around the median, not the mean, owing to being models trained on estimating quantiles.  This was due to a time constraint - I didn't have time to properly introduce
-a bootstrapping based estimation for estimating intervals around the mean, which would have been a more informative prediction interval.  This means that on occasions, the mean prediction can actually be outside one of the prediction intervals.
+Finally, The prediction intervals are around the median, not the mean, owing to being models trained on estimating quantiles.  This was due to a time constraint - I didn't have time to properly introduce a bootstrapping based estimation for estimating intervals around the mean, which would have been a more informative prediction interval.  This means that on occasions, the mean prediction can actually be outside one of the prediction intervals.
 
 
 ## What I would measure next

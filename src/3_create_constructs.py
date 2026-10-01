@@ -229,6 +229,6 @@ if __name__ == "__main__":
             })
     baseline_df = pd.DataFrame(baseline_list)
 
-    all_designs_df = pd.concat([baseline_df, designs_df], ignore_index=True)
+    all_designs_df = pd.concat([designs_df, baseline_df], ignore_index=True)
 
     all_designs_df.to_csv("designs.csv", index=False)
