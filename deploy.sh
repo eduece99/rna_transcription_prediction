@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # create a conda environment from the env.yaml file
-mamba env create -f ./env.yml
+mamba env create -f ./env.yaml
 
 mamba activate venv_scb  # or failing that, conda activate venv
 

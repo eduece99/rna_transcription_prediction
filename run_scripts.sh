@@ -1,6 +1,6 @@
 #!/bin/bash
 
-conda activate venv 
+conda activate venv_scb
 
 python -V
 echo "Using Anaconda environment: $CONDA_PREFIX"
